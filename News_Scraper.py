@@ -25,6 +25,9 @@ class NewsScraper:
         self.driver = webdriver.Chrome(service=service, options=options)
         self.newsItems = []
 
+    def returnNewsItems(self):
+        return self.newsItems
+
     def printNewsItems(self):
         if self.newsItems == []:
             print("No news items currently found... Try searching")
