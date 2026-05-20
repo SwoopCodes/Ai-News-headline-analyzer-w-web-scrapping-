@@ -116,3 +116,5 @@ class Interface:
             if outcome != False:
                 self.statusLabel.configure(text="Process complete")
                 self.populateTable(outcome)
+        else:
+            self.statusLabel.configure(text="Please enter a valid ticker")
