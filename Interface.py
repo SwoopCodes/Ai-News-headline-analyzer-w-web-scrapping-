@@ -1,4 +1,7 @@
 import customtkinter
+import News_Scraper
+import Model
+
 
 class Interface:
 
@@ -23,12 +26,15 @@ class Interface:
         inputLabel = customtkinter.CTkLabel(master=tickerRow, text="Enter stock ticker:", font=("Roboto", 16))
         inputLabel.pack(side="left", padx=(0, 8))
 
-        tickerEntry = customtkinter.CTkEntry(master=tickerRow, width=120, font=("Roboto", 16))
-        tickerEntry.pack(side="left")
+        self.tickerEntry = customtkinter.CTkEntry(master=tickerRow, width=120, font=("Roboto", 16))
+        self.tickerEntry.pack(side="left")
         ## END TICKER ROW FRAME
 
-        tickerSubmitButton = customtkinter.CTkButton(master=frame, text="Enter", font=("Roboto", 16))
+        tickerSubmitButton = customtkinter.CTkButton(master=frame, text="Enter", font=("Roboto", 16), command=self.enterButtonClicked)
         tickerSubmitButton.pack(pady=10, padx=10)
+
+        self.statusLabel = customtkinter.CTkLabel(master=frame, text="", font=("Roboto", 18))
+        self.statusLabel.pack(pady=10, padx=10)
 
         ## START TABLE
         headerFrame = customtkinter.CTkFrame(master=frame, fg_color="transparent")
@@ -48,36 +54,27 @@ class Interface:
             fg_color="#1f538d", corner_radius=0
         ).grid(row=0, column=1, sticky="nsew")
 
-        scrollableTable = customtkinter.CTkScrollableFrame(master=frame)
-        scrollableTable.pack(pady=(1, 10), padx=20, fill='both', expand=True)
-        scrollableTable.grid_columnconfigure(0, weight=3)
-        scrollableTable.grid_columnconfigure(1, weight=1)
+        self.scrollableTable = customtkinter.CTkScrollableFrame(master=frame)
+        self.scrollableTable.pack(pady=(1, 10), padx=20, fill='both', expand=True)
+        self.scrollableTable.grid_columnconfigure(0, weight=3)
+        self.scrollableTable.grid_columnconfigure(1, weight=1)
+        ## END TABLE
 
-        headlines = [
-            ("Deal Creates One Of World's Largest Utilities, Major Power Provider For AI Data Centers",    "Good"),
-            ("SEC cracks down on staking services forcing Kraken to shut down US operations",  "Bad"),
-            ("Tesla deliveries rise 20% quarter on quarter",              "Good"),
-            ("Amazon hit with $2 billion antitrust fine by EU regulators", "Bad"),
-            ("Nvidia stock surges on record AI chip demand",              "Good"),
-            ("Apple reports record Q2 earnings beating all estimates",    "Good"),
-            ("Federal Reserve signals further interest rate hikes ahead",  "Bad"),
-            ("Tesla deliveries rise 20% quarter on quarter",              "Good"),
-            ("Amazon hit with $2 billion antitrust fine by EU regulators", "Bad"),
-            ("Nvidia stock surges on record AI chip demand",              "Good"),
-            ("Apple reports record Q2 earnings beating all estimates",    "Good"),
-            ("Federal Reserve signals further interest rate hikes ahead",  "Bad"),
-            ("Tesla deliveries rise 20% quarter on quarter",              "Good"),
-            ("Amazon hit with $2 billion antitrust fine by EU regulators", "Bad"),
-            ("Nvidia stock surges on record AI chip demand",              "Good"),
-        ]
+        self.root.mainloop()
 
+    def populateTable(self, headlines):
+        # Clear all existing rows
+        for widget in self.scrollableTable.winfo_children():
+            widget.destroy()
+
+        # Repopulate with new data
         for i, (headline, outcome) in enumerate(headlines):
             row_color = "#2b2b2b" if i % 2 == 0 else "#1e1e1e"
             outcome_color = "#1a4a1a" if outcome == "Good" else "#4a1a1a"
             outcome_text_color = "#4caf50" if outcome == "Good" else "#f44336"
 
             customtkinter.CTkLabel(
-                master=scrollableTable,
+                master=self.scrollableTable,
                 text=headline,
                 font=("Roboto", 13),
                 fg_color=row_color,
@@ -87,7 +84,7 @@ class Interface:
             ).grid(row=i, column=0, sticky="nsew", padx=(0, 1), pady=(0, 1), ipady=8)
 
             customtkinter.CTkLabel(
-                master=scrollableTable,
+                master=self.scrollableTable,
                 text=outcome,
                 font=("Roboto", 13, "bold"),
                 fg_color=outcome_color,
@@ -96,6 +93,26 @@ class Interface:
                 corner_radius=0
             ).grid(row=i, column=1, sticky="nsew", pady=(0, 1), ipady=8)
 
-        ## END TABLE
+    def enterButtonClicked(self):
+        ticker = self.tickerEntry.get()
+        if len(ticker) > 1 and len(ticker) < 5:
 
-        self.root.mainloop()
+            scraper = News_Scraper.NewsScraper(ticker)
+            status = scraper.retrieveNews()
+            self.statusLabel.configure(text=status)
+
+            if status == "Ticker not found":
+                return
+
+            headlines = scraper.returnNewsItems()
+            if len(headlines) == 0:
+                self.statusLabel.configure(text="No headlines found")
+                return
+
+            self.statusLabel.configure(text="Headlines found... Running AI analysis")
+            model = Model.Model()
+            outcome = model.predictHeadlines(headlines)
+
+            if outcome != False:
+                self.statusLabel.configure(text="Process complete")
+                self.populateTable(outcome)

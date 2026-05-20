@@ -21,6 +21,7 @@ class Model:
             print("No headlines given...")
             return False
 
+
         X = self.training_data["headline"]
         Y = self.training_data["outcome"]
 
@@ -29,7 +30,7 @@ class Model:
 
         predictionsArray = []
         for headline, pred in zip(newsHeadlines, predictions):
-            matchedHeadlinePrediction = f"{pred.upper()}: {headline}"
+            matchedHeadlinePrediction = (headline, pred.capitalize())
             predictionsArray.append(matchedHeadlinePrediction)
 
         return predictionsArray
