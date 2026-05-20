@@ -1,4 +1,5 @@
 import os
+import sys
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -10,8 +11,20 @@ class NewsScraper:
 
     def __init__(self, main_url):
         self.main_url = f"https://finance.yahoo.com/quote/{main_url}/news/"
-        PATH = "./chromedriver.exe"
-        service = Service(PATH)
+
+        if getattr(sys, 'frozen', False):
+
+            base_path = sys._MEIPASS
+        else:
+            # Running as script
+            base_path = os.path.dirname(os.path.abspath(__file__))
+
+        chromedriver_path = os.path.join(base_path, "chromedriver.exe")
+
+        if not os.path.exists(chromedriver_path):
+            raise FileNotFoundError(f"chromedriver.exe not found at {chromedriver_path}")
+
+        service = Service(chromedriver_path)
 
         # Performance Options
         # By removing any of these:
