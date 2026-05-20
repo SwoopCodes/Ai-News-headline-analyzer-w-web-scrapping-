@@ -9,16 +9,18 @@ The process is as follows:
 - News headlines and model's analysis are output onto the interface
 
 Base screen with no inputs:
-<img width="747" height="788" alt="{7846A87C-9B46-4B2E-8810-E8C925093F80}" src="https://github.com/user-attachments/assets/6b48541e-4ac4-4baa-9bb7-5da7c888f71f" />
+<img width="749" height="782" alt="{E266ED3F-1480-415D-B737-374BB5DD25A5}" src="https://github.com/user-attachments/assets/a8bd11c9-0a42-41a4-ab48-e58c67755004" />
+
 
 Screen with output:
-<img width="755" height="784" alt="{105018C1-93C8-41BE-A57B-2F10AD2C55FE}" src="https://github.com/user-attachments/assets/c3002962-c44a-4c69-a099-a755b885c547" />
+<img width="744" height="783" alt="{AB093F5B-B3D6-4DEC-A19E-47798A0832EC}" src="https://github.com/user-attachments/assets/1a47819d-dfdd-4d46-820c-92565423cf55" />
+
 
 Model is currently over 70% accurate. It could use more training data to increase it's accuracy
 
 Requires:
 - Latest version of google chrome to work
   
-Link to download ZIP: https://www.mediafire.com/file/qk5q98iht8emsdb/ML_headline_analyser.zip/file
+Link to download ZIP: [Download](https://www.mediafire.com/file/qk5q98iht8emsdb/ML_headline_analyser.zip/file)
 
 
